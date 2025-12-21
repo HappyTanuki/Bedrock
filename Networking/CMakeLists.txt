@@ -13,7 +13,7 @@ if(NOT DEFINED ROOT_PROJECT_NAME)
     FetchContent_Declare(
         Common
         GIT_REPOSITORY https://github.com/HappyTanuki/Bedrock-Common.git
-        GIT_TAG main
+        GIT_TAG master
         GIT_SHALLOW ON
     )
     FetchContent_MakeAvailable(Common)
@@ -49,13 +49,14 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 endif ()
 if(WIN32)
     target_link_libraries(${PROJECT_NAME} PUBLIC ws2_32)
+    set_target_properties(${SUB_PROJECT_NAME} PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
 endif()
 
 if (PROJECT_IS_TOP_LEVEL AND CMAKE_EXPORT_COMPILE_COMMANDS)
   execute_process(
     COMMAND ${CMAKE_COMMAND} -E create_symlink
             ${CMAKE_BINARY_DIR}/compile_commands.json
-            ${CMAKE_SOURCE_DIR}/build/compile_commands.json
+            ${CMAKE_BINARY_DIR}/../compile_commands.json
   )
 endif()
 

@@ -1,5 +1,7 @@
 file(GLOB TEST_SOURCES "*.cc")
 
+message(STATUS "searched tests: ${TEST_SOURCES}")
+
 foreach(test_src ${TEST_SOURCES})
     get_filename_component(test_name ${test_src} NAME_WE)
     add_executable(${test_name} ${test_src})
@@ -7,6 +9,7 @@ foreach(test_src ${TEST_SOURCES})
     if(NOT WIN32)
         target_compile_options(${test_name} PRIVATE -march=native -maes -msse2 -msse3 -mssse3 -msse4.1 -msse4.2)
     endif()
+    message(STATUS "adding test: ${test_src}")
     add_test(NAME ${test_name} COMMAND ${test_name})
     set_tests_properties(${test_name} PROPERTIES WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 endforeach()
