@@ -16,7 +16,7 @@
 #include <string>
 
 #ifdef _WIN32
-#include "wsa_errormsg.h"
+#include "networking/wsa_errormsg.h"
 inline int GetLastErrorCode() { return WSAGetLastError(); }
 inline std::string GetErrorMessage(int err) { return WSAErrorMsg(err).str(); }
 #else

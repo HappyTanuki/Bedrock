@@ -1,6 +1,6 @@
 #ifdef _WIN32
-#include <windows.h>
 #include <winsock2.h>
+#include <windows.h>
 
 #include <string>
 #include <string_view>
@@ -24,7 +24,7 @@ class WSAErrorMsg {
     }
   }
 
-  std::string_view str() const { return buf_ ? buf_ : fallback_; }
+  std::string str() const { return buf_ ? buf_ : fallback_; }
 
  private:
   LPSTR buf_;                       // FormatMessage에서 할당된 버퍼

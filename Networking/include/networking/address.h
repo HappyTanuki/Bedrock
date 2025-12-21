@@ -3,8 +3,8 @@
 
 #ifdef _WIN32
 #define NOMINMAX
-#include <windows.h>
 #include <winsock2.h>
+#include <windows.h>
 #include <ws2tcpip.h>
 #define in_addr_t ULONG
 #elif __linux__

@@ -5,12 +5,17 @@ project(${ROOT_PROJECT_NAME} LANGUAGES CXX)
 include(CTest)
 enable_testing()
 
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 add_library(${ROOT_PROJECT_NAME} INTERFACE)
 
 add_subdirectory(Common)
 target_link_libraries(${ROOT_PROJECT_NAME} INTERFACE ${ROOT_PROJECT_NAME}::Common)
-add_subdirectory(Net)
-target_link_libraries(${ROOT_PROJECT_NAME} INTERFACE ${ROOT_PROJECT_NAME}::Net)
+add_subdirectory(Networking)
+target_link_libraries(${ROOT_PROJECT_NAME} INTERFACE ${ROOT_PROJECT_NAME}::Networking)
 
 add_subdirectory(test)
 
