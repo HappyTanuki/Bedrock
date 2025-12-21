@@ -1,0 +1,4 @@
+#ifndef BEDROCK_NET_NET_INTRINSICS_H_
+#define BEDROCK_NET_NET_INTRINSICS_H_
+
+#endif

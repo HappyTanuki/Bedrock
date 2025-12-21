@@ -1,0 +1,9 @@
+[submodule "Common"]
+	path = Common
+	url = https://github.com/HappyTanuki/Bedrock-Common.git
+[submodule "Networking"]
+	path = Networking
+	url = https://github.com/HappyTanuki/Bedrock-Networking.git
+[submodule "Threading"]
+	path = Threading
+	url = https://github.com/HappyTanuki/Bedrock-Threading.git

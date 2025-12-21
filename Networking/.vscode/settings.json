@@ -1,0 +1,11 @@
+{
+    "editor.rulers": [
+        {
+            "column": 80
+        }
+    ],
+    "editor.renderWhitespace": "boundary",
+    "editor.formatOnSave": true,
+    "cmake.generator": "Ninja",
+    "C_Cpp.autocomplete": "disabled"
+}
