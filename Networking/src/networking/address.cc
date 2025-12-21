@@ -16,9 +16,11 @@
 #include <string>
 
 #ifdef _WIN32
-#include "networking/wsa_errormsg.h"
+#include "networking/wsa.h"
 inline int GetLastErrorCode() { return WSAGetLastError(); }
-inline std::string GetErrorMessage(int err) { return WSAErrorMsg(err).str(); }
+inline std::string GetErrorMessage(int err) {
+  return bedrock::network::WSAErrorMsg(err).str();
+}
 #else
 #include <cerrno>
 #include <cstring>

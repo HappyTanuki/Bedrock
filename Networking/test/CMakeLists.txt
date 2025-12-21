@@ -1,7 +1,5 @@
 file(GLOB TEST_SOURCES "*.cc")
 
-message(STATUS "searched tests: ${TEST_SOURCES}")
-
 foreach(test_src ${TEST_SOURCES})
     get_filename_component(test_name ${test_src} NAME_WE)
     add_executable(${test_name} ${test_src})

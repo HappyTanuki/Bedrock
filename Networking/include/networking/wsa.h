@@ -5,6 +5,8 @@
 #include <string>
 #include <string_view>
 
+namespace bedrock::network {
+
 class WSAErrorMsg {
  public:
   explicit WSAErrorMsg(int code) : buf_(nullptr) {
@@ -30,5 +32,13 @@ class WSAErrorMsg {
   LPSTR buf_;                       // FormatMessage에서 할당된 버퍼
   const char* fallback_ = nullptr;  // 실패 시 반환용
 };
+
+struct WSAManager {
+ public:
+  WSAManager();
+  ~WSAManager();
+};
+
+}  // namespace bedrock::network
 
 #endif

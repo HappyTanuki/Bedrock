@@ -27,10 +27,8 @@ add_library(${ROOT_PROJECT_NAME}::${SUB_PROJECT_NAME} ALIAS ${SUB_PROJECT_NAME})
 
 target_include_directories(${SUB_PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-add_compile_options(-Werror -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wshadow -Wundef -Wunreachable-code -Wstrict-aliasing -Wnull-dereference -Wdouble-promotion -Wformat=2 -Wcast-qual -Wcast-align)
-
 if(UNIX AND NOT APPLE AND CMAKE_BUILD_TYPE STREQUAL "Release")
-    set_target_properties(${PROJECT_NAME} PROPERTIES
+    set_target_properties(${SUB_PROJECT_NAME} PROPERTIES
         BUILD_WITH_INSTALL_RPATH TRUE
         INSTALL_RPATH "$ORIGIN"
         SKIP_BUILD_RPATH FALSE
@@ -38,7 +36,6 @@ if(UNIX AND NOT APPLE AND CMAKE_BUILD_TYPE STREQUAL "Release")
     )
 endif()
 
-set(CMAKE_CXX_CLANG_TIDY "clang-tidy;-checks=-*,google-readability-casting;-fix;-fix-errors;")
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     # Additional flags for GCC
@@ -48,8 +45,11 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     add_compile_options(-Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-unused-macros -Wno-padded)
 endif ()
 if(WIN32)
-    target_link_libraries(${PROJECT_NAME} PUBLIC ws2_32)
+    target_link_libraries(${SUB_PROJECT_NAME} PUBLIC ws2_32)
     set_target_properties(${SUB_PROJECT_NAME} PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
+else()
+    set(CMAKE_CXX_CLANG_TIDY "clang-tidy;-checks=-*,google-readability-casting;-fix;-fix-errors;")
+    add_compile_options(-Werror -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wshadow -Wundef -Wunreachable-code -Wstrict-aliasing -Wnull-dereference -Wdouble-promotion -Wformat=2 -Wcast-qual -Wcast-align)
 endif()
 
 if (PROJECT_IS_TOP_LEVEL AND CMAKE_EXPORT_COMPILE_COMMANDS)
@@ -73,3 +73,10 @@ if (BEDROCK_NETWORKING_BUILD_TESTS)
 
   add_subdirectory(test)
 endif()
+
+add_custom_command(TARGET ${SUB_PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "$<TARGET_FILE:${SUB_PROJECT_NAME}>"
+        "${CMAKE_BINARY_DIR}/test"
+    COMMENT "Copying ${SUB_PROJECT_NAME} DLL/so to test output directory"
+)
