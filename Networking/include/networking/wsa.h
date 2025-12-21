@@ -1,6 +1,6 @@
 #ifdef _WIN32
-#include <winsock2.h>
 #include <windows.h>
+#include <winsock2.h>
 
 #include <string>
 #include <string_view>
@@ -33,6 +33,11 @@ class WSAErrorMsg {
   const char* fallback_ = nullptr;  // 실패 시 반환용
 };
 
+}  // namespace bedrock::network
+
+#endif
+namespace bedrock::network {
+
 struct WSAManager {
  public:
   WSAManager();
@@ -40,5 +45,3 @@ struct WSAManager {
 };
 
 }  // namespace bedrock::network
-
-#endif
