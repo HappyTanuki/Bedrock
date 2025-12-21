@@ -1,6 +1,9 @@
 #ifdef _WIN32
-#include <windows.h>
+// clang-format off
+// 이 헤더들은 무조건 이 순서로 include 되어야만 함
 #include <winsock2.h>
+#include <windows.h>
+// clang-format on
 
 #include <string>
 #include <string_view>
