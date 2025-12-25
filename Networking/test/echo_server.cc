@@ -40,7 +40,12 @@ int main() {
         [](bedrock::network::Socket new_sock) {
           while (true) {
             auto read = new_sock.Read(BUFSIZ);
-            if (read.status != bedrock::network::SocketErrorStatus::kSuccess) {
+            if (read.status ==
+                bedrock::network::SocketErrorStatus::kDisconnect) {
+              std::cout << "Info: Peer disconnected" << std::endl;
+              break;
+            } else if (read.status !=
+                       bedrock::network::SocketErrorStatus::kSuccess) {
               std::cout << "Error: " << new_sock.GetErrorMessage() << std::endl;
               break;
             }

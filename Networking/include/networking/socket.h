@@ -24,7 +24,13 @@ enum class SocketType : std::uint16_t {
   kRAW = SOCK_RAW
 };
 
-enum class SocketErrorStatus { kSuccess, kFailure, kInternal, kAddress };
+enum class SocketErrorStatus {
+  kSuccess,
+  kFailure,
+  kInternal,
+  kAddress,
+  kDisconnect
+};
 
 class Socket : public Validatable,
                public SocketErrorReportable,

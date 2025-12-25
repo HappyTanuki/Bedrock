@@ -200,7 +200,8 @@ Socket::Read(std::uint32_t request_size) {
 
   switch (type) {
     case SocketType::kTCP:
-      retval = ::recv(socket_fd, reinterpret_cast<char*>(buffer.data()), request_size, 0);
+      retval = ::recv(socket_fd, reinterpret_cast<char*>(buffer.data()),
+                      request_size, 0);
       break;
     case SocketType::kUDP:
       retval = ::recvfrom(socket_fd, reinterpret_cast<char*>(buffer.data()),
@@ -216,6 +217,8 @@ Socket::Read(std::uint32_t request_size) {
     last_errno = GetSocketLastErrorCode();
     last_error_message = GetSocketErrorMessage(last_errno);
     return {{{}, 0}, SocketErrorStatus::kFailure};
+  } else if (retval == 0) {
+    return {{{}, 0}, SocketErrorStatus::kDisconnect};
   }
 
   if (type == SocketType::kUDP) {
@@ -234,12 +237,13 @@ SocketErrorStatus Socket::Write(std::span<const std::byte> data) {
 
   switch (type) {
     case SocketType::kTCP:
-      retval = ::send(socket_fd, reinterpret_cast<const char*>(data.data()), data.size(), 0);
+      retval = ::send(socket_fd, reinterpret_cast<const char*>(data.data()),
+                      data.size(), 0);
       break;
     case SocketType::kUDP:
       retval = ::sendto(socket_fd, reinterpret_cast<const char*>(data.data()),
-                        data.size(), 0,
-                        static_cast<const ::sockaddr*>(addr), Address::Size());
+                        data.size(), 0, static_cast<const ::sockaddr*>(addr),
+                        Address::Size());
       break;
     default:
       return SocketErrorStatus::kAddress;
