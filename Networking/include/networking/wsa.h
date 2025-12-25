@@ -39,6 +39,7 @@ class WSAErrorMsg {
 }  // namespace bedrock::network
 
 #endif
+
 namespace bedrock::network {
 
 struct WSAManager {

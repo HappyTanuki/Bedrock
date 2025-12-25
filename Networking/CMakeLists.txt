@@ -23,7 +23,10 @@ file(GLOB_RECURSE SOURCES "src/*.cc")
 
 add_library(${SUB_PROJECT_NAME} SHARED ${SOURCES})
 target_link_libraries(${SUB_PROJECT_NAME} PUBLIC ${ROOT_PROJECT_NAME}::Common)
-add_library(${ROOT_PROJECT_NAME}::${SUB_PROJECT_NAME} ALIAS ${SUB_PROJECT_NAME})
+
+if(DEFINED ROOT_PROJECT_NAME)
+    add_library(${ROOT_PROJECT_NAME}::${SUB_PROJECT_NAME} ALIAS ${SUB_PROJECT_NAME})
+endif()
 
 target_include_directories(${SUB_PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
@@ -54,7 +57,9 @@ endif()
 find_program(CLANG_TIDY_EXE NAMES clang-tidy)
 
 if(CLANG_TIDY_EXE)
-    set(CMAKE_CXX_CLANG_TIDY "clang-tidy;-checks=-*,google-readability-casting;-fix;-fix-errors;")
+    set(CMAKE_CXX_CLANG_TIDY
+    $<$<COMPILE_LANGUAGE:CXX>:clang-tidy;-checks=-*,google-readability-casting;-fix;-fix-errors>
+)
 endif()
 
 if (PROJECT_IS_TOP_LEVEL AND CMAKE_EXPORT_COMPILE_COMMANDS)

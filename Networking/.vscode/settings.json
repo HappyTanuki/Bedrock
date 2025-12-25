@@ -7,5 +7,11 @@
     "editor.renderWhitespace": "boundary",
     "editor.formatOnSave": true,
     "cmake.generator": "Ninja",
-    "C_Cpp.autocomplete": "disabled"
+    "C_Cpp.autocomplete": "disabled",
+    "files.exclude": {
+        "**/*.rpyc": true,
+        "**/*.rpa": true,
+        "**/*.rpymc": true,
+        "**/cache/": true
+    }
 }

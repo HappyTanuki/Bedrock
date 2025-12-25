@@ -15,20 +15,9 @@
 #include <format>
 #include <string>
 
-#ifdef _WIN32
-#include "networking/wsa.h"
-inline int GetLastErrorCode() { return WSAGetLastError(); }
-inline std::string GetErrorMessage(int err) {
-  return bedrock::network::WSAErrorMsg(err).str();
-}
-#else
-#include <cerrno>
-#include <cstring>
-inline int GetLastErrorCode() { return errno; }
-inline std::string GetErrorMessage(int err) { return std::strerror(err); }
-#endif
-
 namespace bedrock::network {
+
+Address::~Address() = default;
 
 Address& Address::operator=(const ::sockaddr_in& ipv4addr) {
   SetAddr(ipv4addr);
@@ -86,13 +75,13 @@ AddressErrorStatus Address::SetAddr(IPVersion version,
       auto error =
           ::inet_pton(AF_INET, presentation_address.data(), &addrv4->sin_addr);
       if (error == -1) {
-        last_errno = GetLastErrorCode();
-        last_error_message = GetErrorMessage(last_errno);
-        return AddressErrorStatus::kInetPton;
+        last_errno = GetSocketLastErrorCode();
+        last_error_message = GetSocketErrorMessage(last_errno);
+        return AddressErrorStatus::kFailure;
       } else if (error != 1) {
         last_errno = error;
         last_error_message = "Invalid IP string.";
-        return AddressErrorStatus::kInetPton;
+        return AddressErrorStatus::kFailure;
       }
       addrv4->sin_port = htons(port);
     } break;
@@ -101,13 +90,13 @@ AddressErrorStatus Address::SetAddr(IPVersion version,
       auto error = ::inet_pton(AF_INET6, presentation_address.data(),
                                &addrv6->sin6_addr);
       if (error == -1) {
-        last_errno = GetLastErrorCode();
-        last_error_message = GetErrorMessage(last_errno);
-        return AddressErrorStatus::kInetPton;
+        last_errno = GetSocketLastErrorCode();
+        last_error_message = GetSocketErrorMessage(last_errno);
+        return AddressErrorStatus::kFailure;
       } else if (error != 1) {
         last_errno = error;
         last_error_message = "Invalid IP string.";
-        return AddressErrorStatus::kInetPton;
+        return AddressErrorStatus::kFailure;
       }
       addrv6->sin6_port = htons(port);
     } break;
@@ -122,14 +111,31 @@ AddressErrorStatus Address::SetAddr(IPVersion version,
   return AddressErrorStatus::kSuccess;
 }
 
+AddressErrorStatus Address::SetAddr(const ::sockaddr_storage& generic_addr) {
+  const ::sockaddr* sockaddr_casted =
+      reinterpret_cast<const ::sockaddr*>(&generic_addr);
+
+  switch (sockaddr_casted->sa_family) {
+    case AF_INET:
+      SetAddr(*reinterpret_cast<const ::sockaddr_in*>(&generic_addr));
+      break;
+    case AF_INET6:
+      SetAddr(*reinterpret_cast<const ::sockaddr_in6*>(&generic_addr));
+      break;
+    default:
+      return AddressErrorStatus::kAddrinfo;
+  }
+  return AddressErrorStatus::kSuccess;
+}
+
 AddressErrorStatus Address::SetAddr(const ::sockaddr_in& ipv4addr) {
   if (ipv4addr.sin_family != AF_INET) {
     return AddressErrorStatus::kFailure;
   }
 
-  static_assert(sizeof(addr) >= sizeof(::sockaddr_in));
+  static_assert(sizeof(addr) >= sizeof(ipv4addr));
 
-  std::memcpy(&addr, &ipv4addr, sizeof(::sockaddr_in));
+  std::memcpy(&addr, &ipv4addr, sizeof(ipv4addr));
 
   ip_version = IPVersion::kIPV4;
   valid = true;
@@ -142,9 +148,9 @@ AddressErrorStatus Address::SetAddr(const ::sockaddr_in6& ipv6addr) {
     return AddressErrorStatus::kFailure;
   }
 
-  static_assert(sizeof(addr) >= sizeof(::sockaddr_in6));
+  static_assert(sizeof(addr) >= sizeof(ipv6addr));
 
-  std::memcpy(&addr, &ipv6addr, sizeof(::sockaddr_in6));
+  std::memcpy(&addr, &ipv6addr, sizeof(ipv6addr));
 
   ip_version = IPVersion::kIPV6;
   valid = true;
@@ -156,7 +162,7 @@ Address::operator bedrock::DataWithStatus<std::string, AddressErrorStatus>() {
   auto addrv4 = reinterpret_cast<const ::sockaddr_in*>(&addr);
   auto addrv6 = reinterpret_cast<const ::sockaddr_in6*>(&addr);
 
-  if (!valid) {
+  if (!IsValid()) {
     return {"Invalid address internal state.", AddressErrorStatus::kInternal};
   }
 
@@ -166,9 +172,9 @@ Address::operator bedrock::DataWithStatus<std::string, AddressErrorStatus>() {
       auto error =
           ::inet_ntop(AF_INET, &addrv4->sin_addr, addrStr, sizeof(addrStr));
       if (error == nullptr) {
-        last_errno = GetLastErrorCode();
-        last_error_message = GetErrorMessage(last_errno);
-        return {"", AddressErrorStatus::kInetNtop};
+        last_errno = GetSocketLastErrorCode();
+        last_error_message = GetSocketErrorMessage(last_errno);
+        return {"", AddressErrorStatus::kFailure};
       }
       return {std::format("{}:{}", addrStr, GetPort().data),
               AddressErrorStatus::kSuccess};
@@ -178,9 +184,9 @@ Address::operator bedrock::DataWithStatus<std::string, AddressErrorStatus>() {
       auto error =
           ::inet_ntop(AF_INET6, &addrv6->sin6_addr, addrStr, sizeof(addrStr));
       if (error == nullptr) {
-        last_errno = GetLastErrorCode();
-        last_error_message = GetErrorMessage(last_errno);
-        return {"", AddressErrorStatus::kInetNtop};
+        last_errno = GetSocketLastErrorCode();
+        last_error_message = GetSocketErrorMessage(last_errno);
+        return {"", AddressErrorStatus::kFailure};
       }
 
       return {std::format("{}:{}", addrStr, GetPort().data),
@@ -203,8 +209,16 @@ Address::operator std::string() {
   return result.data;
 }
 
+Address::operator const ::sockaddr*() const {
+  if (!IsValid()) {
+    return nullptr;
+  }
+
+  return reinterpret_cast<const ::sockaddr*>(&addr);
+}
+
 Address::operator ::sockaddr_in() const {
-  if (!valid || ip_version != IPVersion::kIPV4) {
+  if (!IsValid() || ip_version != IPVersion::kIPV4) {
     return {};
   }
 
@@ -212,7 +226,7 @@ Address::operator ::sockaddr_in() const {
 }
 
 Address::operator ::sockaddr_in6() const {
-  if (!valid || ip_version != IPVersion::kIPV6) {
+  if (!IsValid() || ip_version != IPVersion::kIPV6) {
     return {};
   }
 
@@ -221,7 +235,7 @@ Address::operator ::sockaddr_in6() const {
 
 bedrock::DataWithStatus<IPVersion, AddressErrorStatus> Address::GetIPVersion()
     const {
-  if (valid) {
+  if (IsValid()) {
     return {ip_version, AddressErrorStatus::kSuccess};
   } else {
     return {IPVersion::kInvalid, AddressErrorStatus::kFailure};
