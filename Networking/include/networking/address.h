@@ -3,8 +3,9 @@
 
 #ifdef _WIN32
 #define NOMINMAX
-#include <windows.h>
+// clang-format off
 #include <winsock2.h>
+#include <windows.h>
 #include <ws2tcpip.h>
 #define in_addr_t ULONG
 #elif __linux__
@@ -37,8 +38,8 @@ enum class AddressErrorStatus {
   kAddrinfo
 };
 
-class Address : public bedrock::Validatable,
-                public bedrock::SocketErrorReportable {
+class Address : public Validatable,
+                public SocketErrorReportable {
  public:
   Address(const Address&) = default;
   Address& operator=(const Address&) = default;
@@ -73,15 +74,15 @@ class Address : public bedrock::Validatable,
                              std::string_view presentation_address,
                              std::uint16_t port);
 
-  explicit operator bedrock::DataWithStatus<std::string, AddressErrorStatus>();
+  explicit operator DataWithStatus<std::string, AddressErrorStatus>();
   explicit operator std::string();
 
   explicit operator const ::sockaddr*() const;
   explicit operator ::sockaddr_in() const;
   explicit operator ::sockaddr_in6() const;
 
-  bedrock::DataWithStatus<IPVersion, AddressErrorStatus> GetIPVersion() const;
-  bedrock::DataWithStatus<std::uint16_t, AddressErrorStatus> GetPort() const;
+  DataWithStatus<IPVersion, AddressErrorStatus> GetIPVersion() const;
+  DataWithStatus<std::uint16_t, AddressErrorStatus> GetPort() const;
   static std::uint32_t Size() { return sizeof(addr); }
 
   // Interface implements
@@ -100,7 +101,7 @@ class Address : public bedrock::Validatable,
 
   IPVersion ip_version = IPVersion::kInvalid;
 
-  ::sockaddr_storage addr;
+  ::sockaddr_storage addr = {};
 };
 
 }  // namespace bedrock::network

@@ -42,7 +42,7 @@ int main() {
             auto read = new_sock.Read(BUFSIZ);
             if (read.status != bedrock::network::SocketErrorStatus::kSuccess) {
               std::cout << "Error: " << new_sock.GetErrorMessage() << std::endl;
-              std::exit(EXIT_FAILURE);
+              break;
             }
 
             if (read.data.first.size() != read.data.second) {
@@ -64,7 +64,7 @@ int main() {
                       << std::endl;
           }
 
-          std::exit(EXIT_SUCCESS);
+          return;
         },
         std::move(ret_newsock.data));
     th.detach();

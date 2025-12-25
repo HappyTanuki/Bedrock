@@ -158,7 +158,7 @@ AddressErrorStatus Address::SetAddr(const ::sockaddr_in6& ipv6addr) {
   return AddressErrorStatus::kSuccess;
 }
 
-Address::operator bedrock::DataWithStatus<std::string, AddressErrorStatus>() {
+Address::operator DataWithStatus<std::string, AddressErrorStatus>() {
   auto addrv4 = reinterpret_cast<const ::sockaddr_in*>(&addr);
   auto addrv6 = reinterpret_cast<const ::sockaddr_in6*>(&addr);
 
@@ -199,8 +199,8 @@ Address::operator bedrock::DataWithStatus<std::string, AddressErrorStatus>() {
 }
 
 Address::operator std::string() {
-  auto result = static_cast<bedrock::DataWithStatus<
-      std::string, bedrock::network::AddressErrorStatus>>(*this);
+  auto result = static_cast<DataWithStatus<
+      std::string, AddressErrorStatus>>(*this);
 
   if (result.status != AddressErrorStatus::kSuccess) {
     return "";
@@ -233,7 +233,7 @@ Address::operator ::sockaddr_in6() const {
   return *reinterpret_cast<const ::sockaddr_in6*>(&addr);
 }
 
-bedrock::DataWithStatus<IPVersion, AddressErrorStatus> Address::GetIPVersion()
+DataWithStatus<IPVersion, AddressErrorStatus> Address::GetIPVersion()
     const {
   if (IsValid()) {
     return {ip_version, AddressErrorStatus::kSuccess};
@@ -242,7 +242,7 @@ bedrock::DataWithStatus<IPVersion, AddressErrorStatus> Address::GetIPVersion()
   }
 }
 
-bedrock::DataWithStatus<std::uint16_t, AddressErrorStatus> Address::GetPort()
+DataWithStatus<std::uint16_t, AddressErrorStatus> Address::GetPort()
     const {
   switch (ip_version) {
     case IPVersion::kIPV4:

@@ -1,7 +1,14 @@
 #include "networking/socket.h"
 
+#ifdef _WIN32
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#elif __linux__
 #include <netinet/in.h>
 #include <sys/socket.h>
+#else
+#error "이 플랫폼은 지원되지 않습니다."
+#endif
 
 #include <vector>
 
@@ -193,10 +200,11 @@ Socket::Read(std::uint32_t request_size) {
 
   switch (type) {
     case SocketType::kTCP:
-      retval = ::recv(socket_fd, buffer.data(), request_size, 0);
+      retval = ::recv(socket_fd, reinterpret_cast<char*>(buffer.data()), request_size, 0);
       break;
     case SocketType::kUDP:
-      retval = ::recvfrom(socket_fd, buffer.data(), request_size, 0,
+      retval = ::recvfrom(socket_fd, reinterpret_cast<char*>(buffer.data()),
+                          request_size, 0,
                           reinterpret_cast<::sockaddr*>(&apponant_raw_addr),
                           &apponant_raw_addr_size);
       break;
@@ -226,10 +234,11 @@ SocketErrorStatus Socket::Write(std::span<const std::byte> data) {
 
   switch (type) {
     case SocketType::kTCP:
-      retval = ::send(socket_fd, data.data(), data.size(), 0);
+      retval = ::send(socket_fd, reinterpret_cast<const char*>(data.data()), data.size(), 0);
       break;
     case SocketType::kUDP:
-      retval = ::sendto(socket_fd, data.data(), data.size(), 0,
+      retval = ::sendto(socket_fd, reinterpret_cast<const char*>(data.data()),
+                        data.size(), 0,
                         static_cast<const ::sockaddr*>(addr), Address::Size());
       break;
     default:

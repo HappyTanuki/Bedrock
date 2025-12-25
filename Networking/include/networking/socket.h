@@ -1,8 +1,15 @@
 #ifndef BEDROCK_NETWORKING_NETWORKING_SOCKET_H_
 #define BEDROCK_NETWORKING_NETWORKING_SOCKET_H_
 
+#ifdef _WIN32
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#elif __linux__
 #include <sys/socket.h>
 #include <unistd.h>
+#else
+#error "이 플랫폼은 지원되지 않습니다."
+#endif
 
 #include "address.h"
 #include "common/interfaces.h"
@@ -19,9 +26,9 @@ enum class SocketType : std::uint16_t {
 
 enum class SocketErrorStatus { kSuccess, kFailure, kInternal, kAddress };
 
-class Socket : public bedrock::Validatable,
-               public bedrock::SocketErrorReportable,
-               public bedrock::ReadWritable<SocketErrorStatus> {
+class Socket : public Validatable,
+               public SocketErrorReportable,
+               public ReadWritable<SocketErrorStatus> {
  public:
   Socket(const Socket& other) = delete;
   Socket& operator=(const Socket& other) = delete;
