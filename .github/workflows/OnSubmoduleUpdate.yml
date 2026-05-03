@@ -1,0 +1,47 @@
+name: On submodule update
+
+on:
+  repository_dispatch:
+    types: [ submodule_updated ]
+
+permissions:
+  contents: write
+
+jobs:
+  submodule_update_received:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set branch
+        run: |
+          BRANCH="${{ github.event.client_payload.branch }}"
+          echo "BRANCH=$BRANCH" >> $GITHUB_ENV
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          submodules: recursive
+      - name: Sync submodule branch
+        run: |
+          git submodule update --init --recursive
+
+          git submodule foreach "
+            git fetch origin
+            git checkout $BRANCH
+            git pull origin $BRANCH
+          "
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+
+          git add .
+
+          if git diff --cached --quiet; then
+            echo "No changes"
+            exit 0
+          fi
+
+          git commit -m "chore: update submodules to latest ($BRANCH)"
+      - name: Push changes
+        run: |
+          git push origin HEAD:${BRANCH}
