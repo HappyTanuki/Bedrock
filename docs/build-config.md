@@ -82,11 +82,11 @@ _BedrockBuildConfig_register_package(INSTALL_DESTINATION <relative-package-dir> 
 - `detect_libc` reports `glibc`, `musl` or `other` for native Linux builds and `unknown` otherwise. `validate_linkage` rejects STATIC linkage with glibc on Linux.
 - `set_language_properties` sets `CXX_STANDARD 23`, `CXX_STANDARD_REQUIRED ON` and `CXX_EXTENSIONS OFF`.
 - `enable_pch` adds a PRIVATE precompiled header. `set_msvc_runtime` sets `MSVC_RUNTIME_LIBRARY`. `set_msvc_debug_information` selects `ProgramDatabase` for Debug and RelWithDebInfo with MSVC.
-- `set_origin_rpath` applies only to non-Apple Unix Release builds. It sets `$ORIGIN` as both build and install RPATH and builds with the install RPATH, so it assumes dependent shared libraries are placed next to the binary.
+- `set_origin_rpath` applies only to non-Apple Unix Release builds. It sets `$ORIGIN` as both build and install RPATH and builds with the install RPATH, so it assumes dependent shared libraries are placed next to the binary. It tests `CMAKE_BUILD_TYPE`, so under a multi-config generator it changes nothing for any configuration.
 - `enable_windows_exports` sets `WINDOWS_EXPORT_ALL_SYMBOLS` on Windows. `copy_runtime_dlls` copies `$<TARGET_RUNTIME_DLLS>` next to the target after each Windows build.
 - `enable_clang_tidy` sets `CXX_CLANG_TIDY` to report `google-readability-casting` when `clang-tidy` was found at configure time (`_BEDROCK_CLANG_TIDY_EXE`). It never passes `-fix`: rewriting sources during a build races between translation units and modifies source trees, including fetched ones.
 - `stage_public_headers` deletes `DESTINATION`, copies the listed files and every file under the listed trees at configure time, and returns `DESTINATION` in `OUT_VAR`. `assert_header_visibility` fails if `SOURCE_ROOT` itself is an entry of the target's `INTERFACE_INCLUDE_DIRECTORIES`.
-- `copy_compile_commands` creates an ALL target that copies the compile database. It does so only when `CMAKE_EXPORT_COMPILE_COMMANDS` is ON and the generator is single-config Ninja or a Unix, MinGW, MSYS or NMake Makefile generator; Visual Studio generators do not write `compile_commands.json`.
+- `copy_compile_commands` creates an ALL target that copies the compile database. It does so only when `CMAKE_EXPORT_COMPILE_COMMANDS` is ON and the generator is Ninja, Ninja Multi-Config, or a Unix, MinGW, MSYS or NMake Makefile generator; Visual Studio generators do not write `compile_commands.json`. Ninja Multi-Config writes a single database at the top of the build tree, with one entry per source file and configuration, and building any configuration copies it.
 - `get_targets` returns the real carrier target names (`_BedrockBuildConfig_<Name>`). `export_build_tree` writes them to a build-tree export file in the `_BedrockBuildConfig::` namespace.
 - `register_targets` installs every carrier in export set `_BedrockBuildConfigTargets` with the `_BedrockBuildConfig::` namespace, and installs `_BedrockBuildConfigConfig.cmake` generated from `_BedrockBuildConfigConfig.cmake.in`.
 - `register_package` installs `TARGETS` in export set `EXPORT_NAME` under `NAMESPACE`, and installs `CONFIG_FILE` copied as `<EXPORT_NAME>Config.cmake`.
@@ -95,7 +95,25 @@ Including the package has no install side effects. `register_targets` and `regis
 
 ## Presets
 
-The preset fragments under `cmake/_BedrockBuildConfig/presets/` are canonical. CMake reads presets before configuring, and therefore before FetchContent runs, so consumers keep checked-in copies; Common includes them from `.cmake/presets/`. Run `python tools/sync_build_config_presets.py --destination <Common-root>` to update the copies, or add `--check` to report drift without writing. `--check` exits 1 on drift, and a missing canonical fragment exits 1 in both modes.
+The preset fragments under `cmake/_BedrockBuildConfig/presets/` are canonical. CMake reads presets before configuring, and therefore before FetchContent runs, so consumers keep checked-in copies; Common includes them from `.cmake/presets/`. Run `python tools/sync_build_config_presets.py --destination <Common-root>` to update the copies, or add `--check` to report drift without writing.
+
+A component that owns one of the fragments lists it in `<Common-root>/.cmake/presets/sync-exclude.json`:
+
+```json
+{
+  "version": 1,
+  "exclude": [
+    {"file": "windows.json", "reason": "why the component owns this fragment"}
+  ]
+}
+```
+
+- `file` must be `common.json`, `windows.json` or `linux.json`, at most once each, with a non-empty `reason`. An unknown file name or key, another `version`, or malformed JSON exits 2 before anything is compared or written.
+- Both modes skip excluded fragments: they are never reported as drift or overwritten, and every run prints each one with its reason. An excluded fragment must still exist in the component; if it becomes identical to the canonical copy, the tool notes that the exclusion can be removed.
+- The other fragments are still compared byte for byte and, in write mode, updated. The component's `CMakePresets.json` must include all three fragments, excluded ones as well.
+- `--check` exits 1 on drift. A missing canonical or excluded fragment, or a fragment that `CMakePresets.json` does not include, exits 1 in both modes.
+
+Common excludes `windows.json`. Its Windows presets use Ninja Multi-Config: one configure preset per architecture, linkage and CRT, each with Debug, Release, RelWithDebInfo and MinSizeRel build and test presets. This is a Common-only decision, so the canonical `windows.json` keeps its single-config presets.
 
 ## Bedrock product composition
 
