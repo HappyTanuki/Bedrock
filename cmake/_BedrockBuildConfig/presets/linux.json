@@ -1,0 +1,445 @@
+{
+  "version": 5,
+  "include": [ "common.json" ],
+  "configurePresets": [
+    {
+      "name": "Linux-Build",
+      "hidden": true,
+      "generator": "Ninja",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+    {
+      "name": "Lin-x86",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_CXX_FLAGS": "-m32",
+        "CMAKE_EXE_LINKER_FLAGS": "-m32",
+        "CMAKE_SHARED_LINKER_FLAGS": "-m32",
+        "CMAKE_MODULE_LINKER_FLAGS": "-m32"
+      }
+    },
+    {
+      "name": "Lin-x64",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_CXX_FLAGS": "-m64",
+        "CMAKE_EXE_LINKER_FLAGS": "-m64",
+        "CMAKE_SHARED_LINKER_FLAGS": "-m64",
+        "CMAKE_MODULE_LINKER_FLAGS": "-m64"
+      }
+    },
+    {
+      "name": "Clang",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "/usr/bin/clang++"
+      }
+    },
+    {
+      "name": "GCC",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "/usr/bin/g++"
+      }
+    },
+    {
+      "name": "Clang-x86-Shared-Debug",
+      "displayName": "Clang x86 Shared Debug",
+      "inherits": [ "Paths", "Linux-Build", "Clang", "Lin-x86", "Shared", "Debug" ]
+    },
+    {
+      "name": "Clang-x86-Shared-Release",
+      "displayName": "Clang x86 Shared Release",
+      "inherits": [ "Paths", "Linux-Build", "Clang", "Lin-x86", "Shared", "Release" ]
+    },
+    {
+      "name": "Clang-x86-Shared-RelWithDebInfo",
+      "displayName": "Clang x86 Shared RelWithDebInfo",
+      "inherits": [ "Paths", "Linux-Build", "Clang", "Lin-x86", "Shared", "RelWithDebInfo" ]
+    },
+    {
+      "name": "Clang-x86-Shared-MinSizeRel",
+      "displayName": "Clang x86 Shared MinSizeRel",
+      "inherits": [ "Paths", "Linux-Build", "Clang", "Lin-x86", "Shared", "MinSizeRel" ]
+    },
+    {
+      "name": "Clang-x86-Static-Debug",
+      "displayName": "Clang x86 Static Debug",
+      "inherits": [ "Paths", "Linux-Build", "Clang", "Lin-x86", "Static", "Debug" ]
+    },
+    {
+      "name": "Clang-x86-Static-Release",
+      "displayName": "Clang x86 Static Release",
+      "inherits": [ "Paths", "Linux-Build", "Clang", "Lin-x86", "Static", "Release" ]
+    },
+    {
+      "name": "Clang-x86-Static-RelWithDebInfo",
+      "displayName": "Clang x86 Static RelWithDebInfo",
+      "inherits": [ "Paths", "Linux-Build", "Clang", "Lin-x86", "Static", "RelWithDebInfo" ]
+    },
+    {
+      "name": "Clang-x86-Static-MinSizeRel",
+      "displayName": "Clang x86 Static MinSizeRel",
+      "inherits": [ "Paths", "Linux-Build", "Clang", "Lin-x86", "Static", "MinSizeRel" ]
+    },
+    {
+      "name": "Clang-x64-Shared-Debug",
+      "displayName": "Clang x64 Shared Debug",
+      "inherits": [ "Paths", "Linux-Build", "Clang", "Lin-x64", "Shared", "Debug" ]
+    },
+    {
+      "name": "Clang-x64-Shared-Release",
+      "displayName": "Clang x64 Shared Release",
+      "inherits": [ "Paths", "Linux-Build", "Clang", "Lin-x64", "Shared", "Release" ]
+    },
+    {
+      "name": "Clang-x64-Shared-RelWithDebInfo",
+      "displayName": "Clang x64 Shared RelWithDebInfo",
+      "inherits": [ "Paths", "Linux-Build", "Clang", "Lin-x64", "Shared", "RelWithDebInfo" ]
+    },
+    {
+      "name": "Clang-x64-Shared-MinSizeRel",
+      "displayName": "Clang x64 Shared MinSizeRel",
+      "inherits": [ "Paths", "Linux-Build", "Clang", "Lin-x64", "Shared", "MinSizeRel" ]
+    },
+    {
+      "name": "Clang-x64-Static-Debug",
+      "displayName": "Clang x64 Static Debug",
+      "inherits": [ "Paths", "Linux-Build", "Clang", "Lin-x64", "Static", "Debug" ]
+    },
+    {
+      "name": "Clang-x64-Static-Release",
+      "displayName": "Clang x64 Static Release",
+      "inherits": [ "Paths", "Linux-Build", "Clang", "Lin-x64", "Static", "Release" ]
+    },
+    {
+      "name": "Clang-x64-Static-RelWithDebInfo",
+      "displayName": "Clang x64 Static RelWithDebInfo",
+      "inherits": [ "Paths", "Linux-Build", "Clang", "Lin-x64", "Static", "RelWithDebInfo" ]
+    },
+    {
+      "name": "Clang-x64-Static-MinSizeRel",
+      "displayName": "Clang x64 Static MinSizeRel",
+      "inherits": [ "Paths", "Linux-Build", "Clang", "Lin-x64", "Static", "MinSizeRel" ]
+    },
+    {
+      "name": "GCC-x86-Shared-Debug",
+      "displayName": "GCC x86 Shared Debug",
+      "inherits": [ "Paths", "Linux-Build", "GCC", "Lin-x86", "Shared", "Debug" ]
+    },
+    {
+      "name": "GCC-x86-Shared-Release",
+      "displayName": "GCC x86 Shared Release",
+      "inherits": [ "Paths", "Linux-Build", "GCC", "Lin-x86", "Shared", "Release" ]
+    },
+    {
+      "name": "GCC-x86-Shared-RelWithDebInfo",
+      "displayName": "GCC x86 Shared RelWithDebInfo",
+      "inherits": [ "Paths", "Linux-Build", "GCC", "Lin-x86", "Shared", "RelWithDebInfo" ]
+    },
+    {
+      "name": "GCC-x86-Shared-MinSizeRel",
+      "displayName": "GCC x86 Shared MinSizeRel",
+      "inherits": [ "Paths", "Linux-Build", "GCC", "Lin-x86", "Shared", "MinSizeRel" ]
+    },
+    {
+      "name": "GCC-x86-Static-Debug",
+      "displayName": "GCC x86 Static Debug",
+      "inherits": [ "Paths", "Linux-Build", "GCC", "Lin-x86", "Static", "Debug" ]
+    },
+    {
+      "name": "GCC-x86-Static-Release",
+      "displayName": "GCC x86 Static Release",
+      "inherits": [ "Paths", "Linux-Build", "GCC", "Lin-x86", "Static", "Release" ]
+    },
+    {
+      "name": "GCC-x86-Static-RelWithDebInfo",
+      "displayName": "GCC x86 Static RelWithDebInfo",
+      "inherits": [ "Paths", "Linux-Build", "GCC", "Lin-x86", "Static", "RelWithDebInfo" ]
+    },
+    {
+      "name": "GCC-x86-Static-MinSizeRel",
+      "displayName": "GCC x86 Static MinSizeRel",
+      "inherits": [ "Paths", "Linux-Build", "GCC", "Lin-x86", "Static", "MinSizeRel" ]
+    },
+    {
+      "name": "GCC-x64-Shared-Debug",
+      "displayName": "GCC x64 Shared Debug",
+      "inherits": [ "Paths", "Linux-Build", "GCC", "Lin-x64", "Shared", "Debug" ]
+    },
+    {
+      "name": "GCC-x64-Shared-Release",
+      "displayName": "GCC x64 Shared Release",
+      "inherits": [ "Paths", "Linux-Build", "GCC", "Lin-x64", "Shared", "Release" ]
+    },
+    {
+      "name": "GCC-x64-Shared-RelWithDebInfo",
+      "displayName": "GCC x64 Shared RelWithDebInfo",
+      "inherits": [ "Paths", "Linux-Build", "GCC", "Lin-x64", "Shared", "RelWithDebInfo" ]
+    },
+    {
+      "name": "GCC-x64-Shared-MinSizeRel",
+      "displayName": "GCC x64 Shared MinSizeRel",
+      "inherits": [ "Paths", "Linux-Build", "GCC", "Lin-x64", "Shared", "MinSizeRel" ]
+    },
+    {
+      "name": "GCC-x64-Static-Debug",
+      "displayName": "GCC x64 Static Debug",
+      "inherits": [ "Paths", "Linux-Build", "GCC", "Lin-x64", "Static", "Debug" ]
+    },
+    {
+      "name": "GCC-x64-Static-Release",
+      "displayName": "GCC x64 Static Release",
+      "inherits": [ "Paths", "Linux-Build", "GCC", "Lin-x64", "Static", "Release" ]
+    },
+    {
+      "name": "GCC-x64-Static-RelWithDebInfo",
+      "displayName": "GCC x64 Static RelWithDebInfo",
+      "inherits": [ "Paths", "Linux-Build", "GCC", "Lin-x64", "Static", "RelWithDebInfo" ]
+    },
+    {
+      "name": "GCC-x64-Static-MinSizeRel",
+      "displayName": "GCC x64 Static MinSizeRel",
+      "inherits": [ "Paths", "Linux-Build", "GCC", "Lin-x64", "Static", "MinSizeRel" ]
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "Linux-Only",
+      "hidden": true,
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+    {
+      "name": "Clang-x86-Shared-Debug",
+      "displayName": "Clang x86 Shared Debug",
+      "inherits": [ "Linux-Only" ],
+      "configurePreset": "Clang-x86-Shared-Debug",
+      "configuration": "Debug"
+    },
+    {
+      "name": "Clang-x86-Shared-Release",
+      "displayName": "Clang x86 Shared Release",
+      "inherits": [ "Linux-Only" ],
+      "configurePreset": "Clang-x86-Shared-Release",
+      "configuration": "Release"
+    },
+    {
+      "name": "Clang-x86-Shared-RelWithDebInfo",
+      "displayName": "Clang x86 Shared RelWithDebInfo",
+      "inherits": [ "Linux-Only" ],
+      "configurePreset": "Clang-x86-Shared-RelWithDebInfo",
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "Clang-x86-Shared-MinSizeRel",
+      "displayName": "Clang x86 Shared MinSizeRel",
+      "inherits": [ "Linux-Only" ],
+      "configurePreset": "Clang-x86-Shared-MinSizeRel",
+      "configuration": "MinSizeRel"
+    },
+    {
+      "name": "Clang-x86-Static-Debug",
+      "displayName": "Clang x86 Static Debug",
+      "inherits": [ "Linux-Only" ],
+      "configurePreset": "Clang-x86-Static-Debug",
+      "configuration": "Debug"
+    },
+    {
+      "name": "Clang-x86-Static-Release",
+      "displayName": "Clang x86 Static Release",
+      "inherits": [ "Linux-Only" ],
+      "configurePreset": "Clang-x86-Static-Release",
+      "configuration": "Release"
+    },
+    {
+      "name": "Clang-x86-Static-RelWithDebInfo",
+      "displayName": "Clang x86 Static RelWithDebInfo",
+      "inherits": [ "Linux-Only" ],
+      "configurePreset": "Clang-x86-Static-RelWithDebInfo",
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "Clang-x86-Static-MinSizeRel",
+      "displayName": "Clang x86 Static MinSizeRel",
+      "inherits": [ "Linux-Only" ],
+      "configurePreset": "Clang-x86-Static-MinSizeRel",
+      "configuration": "MinSizeRel"
+    },
+    {
+      "name": "Clang-x64-Shared-Debug",
+      "displayName": "Clang x64 Shared Debug",
+      "inherits": [ "Linux-Only" ],
+      "configurePreset": "Clang-x64-Shared-Debug",
+      "configuration": "Debug"
+    },
+    {
+      "name": "Clang-x64-Shared-Release",
+      "displayName": "Clang x64 Shared Release",
+      "inherits": [ "Linux-Only" ],
+      "configurePreset": "Clang-x64-Shared-Release",
+      "configuration": "Release"
+    },
+    {
+      "name": "Clang-x64-Shared-RelWithDebInfo",
+      "displayName": "Clang x64 Shared RelWithDebInfo",
+      "inherits": [ "Linux-Only" ],
+      "configurePreset": "Clang-x64-Shared-RelWithDebInfo",
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "Clang-x64-Shared-MinSizeRel",
+      "displayName": "Clang x64 Shared MinSizeRel",
+      "inherits": [ "Linux-Only" ],
+      "configurePreset": "Clang-x64-Shared-MinSizeRel",
+      "configuration": "MinSizeRel"
+    },
+    {
+      "name": "Clang-x64-Static-Debug",
+      "displayName": "Clang x64 Static Debug",
+      "inherits": [ "Linux-Only" ],
+      "configurePreset": "Clang-x64-Static-Debug",
+      "configuration": "Debug"
+    },
+    {
+      "name": "Clang-x64-Static-Release",
+      "displayName": "Clang x64 Static Release",
+      "inherits": [ "Linux-Only" ],
+      "configurePreset": "Clang-x64-Static-Release",
+      "configuration": "Release"
+    },
+    {
+      "name": "Clang-x64-Static-RelWithDebInfo",
+      "displayName": "Clang x64 Static RelWithDebInfo",
+      "inherits": [ "Linux-Only" ],
+      "configurePreset": "Clang-x64-Static-RelWithDebInfo",
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "Clang-x64-Static-MinSizeRel",
+      "displayName": "Clang x64 Static MinSizeRel",
+      "inherits": [ "Linux-Only" ],
+      "configurePreset": "Clang-x64-Static-MinSizeRel",
+      "configuration": "MinSizeRel"
+    },
+    {
+      "name": "GCC-x86-Shared-Debug",
+      "displayName": "GCC x86 Shared Debug",
+      "inherits": [ "Linux-Only" ],
+      "configurePreset": "GCC-x86-Shared-Debug",
+      "configuration": "Debug"
+    },
+    {
+      "name": "GCC-x86-Shared-Release",
+      "displayName": "GCC x86 Shared Release",
+      "inherits": [ "Linux-Only" ],
+      "configurePreset": "GCC-x86-Shared-Release",
+      "configuration": "Release"
+    },
+    {
+      "name": "GCC-x86-Shared-RelWithDebInfo",
+      "displayName": "GCC x86 Shared RelWithDebInfo",
+      "inherits": [ "Linux-Only" ],
+      "configurePreset": "GCC-x86-Shared-RelWithDebInfo",
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "GCC-x86-Shared-MinSizeRel",
+      "displayName": "GCC x86 Shared MinSizeRel",
+      "inherits": [ "Linux-Only" ],
+      "configurePreset": "GCC-x86-Shared-MinSizeRel",
+      "configuration": "MinSizeRel"
+    },
+    {
+      "name": "GCC-x86-Static-Debug",
+      "displayName": "GCC x86 Static Debug",
+      "inherits": [ "Linux-Only" ],
+      "configurePreset": "GCC-x86-Static-Debug",
+      "configuration": "Debug"
+    },
+    {
+      "name": "GCC-x86-Static-Release",
+      "displayName": "GCC x86 Static Release",
+      "inherits": [ "Linux-Only" ],
+      "configurePreset": "GCC-x86-Static-Release",
+      "configuration": "Release"
+    },
+    {
+      "name": "GCC-x86-Static-RelWithDebInfo",
+      "displayName": "GCC x86 Static RelWithDebInfo",
+      "inherits": [ "Linux-Only" ],
+      "configurePreset": "GCC-x86-Static-RelWithDebInfo",
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "GCC-x86-Static-MinSizeRel",
+      "displayName": "GCC x86 Static MinSizeRel",
+      "inherits": [ "Linux-Only" ],
+      "configurePreset": "GCC-x86-Static-MinSizeRel",
+      "configuration": "MinSizeRel"
+    },
+    {
+      "name": "GCC-x64-Shared-Debug",
+      "displayName": "GCC x64 Shared Debug",
+      "inherits": [ "Linux-Only" ],
+      "configurePreset": "GCC-x64-Shared-Debug",
+      "configuration": "Debug"
+    },
+    {
+      "name": "GCC-x64-Shared-Release",
+      "displayName": "GCC x64 Shared Release",
+      "inherits": [ "Linux-Only" ],
+      "configurePreset": "GCC-x64-Shared-Release",
+      "configuration": "Release"
+    },
+    {
+      "name": "GCC-x64-Shared-RelWithDebInfo",
+      "displayName": "GCC x64 Shared RelWithDebInfo",
+      "inherits": [ "Linux-Only" ],
+      "configurePreset": "GCC-x64-Shared-RelWithDebInfo",
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "GCC-x64-Shared-MinSizeRel",
+      "displayName": "GCC x64 Shared MinSizeRel",
+      "inherits": [ "Linux-Only" ],
+      "configurePreset": "GCC-x64-Shared-MinSizeRel",
+      "configuration": "MinSizeRel"
+    },
+    {
+      "name": "GCC-x64-Static-Debug",
+      "displayName": "GCC x64 Static Debug",
+      "inherits": [ "Linux-Only" ],
+      "configurePreset": "GCC-x64-Static-Debug",
+      "configuration": "Debug"
+    },
+    {
+      "name": "GCC-x64-Static-Release",
+      "displayName": "GCC x64 Static Release",
+      "inherits": [ "Linux-Only" ],
+      "configurePreset": "GCC-x64-Static-Release",
+      "configuration": "Release"
+    },
+    {
+      "name": "GCC-x64-Static-RelWithDebInfo",
+      "displayName": "GCC x64 Static RelWithDebInfo",
+      "inherits": [ "Linux-Only" ],
+      "configurePreset": "GCC-x64-Static-RelWithDebInfo",
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "GCC-x64-Static-MinSizeRel",
+      "displayName": "GCC x64 Static MinSizeRel",
+      "inherits": [ "Linux-Only" ],
+      "configurePreset": "GCC-x64-Static-MinSizeRel",
+      "configuration": "MinSizeRel"
+    }
+  ]
+}
